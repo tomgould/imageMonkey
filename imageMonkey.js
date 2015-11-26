@@ -1,66 +1,82 @@
 // ==UserScript==
-// @name       imageMonkey.js
-// @namespace  http://imageMonkey.js
+// @name       randomImages.js
+// @namespace  http://randomImages.js
 // @version    0.1
 // @description  replaces all the images with Beer Hold images
 // @match      *://*/*
-// @copyright  2012+, imageMonkey.js
+// @copyright  2012+, randomImages.js
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
 // @grant GM_addStyle
 // ==/UserScript==
-var baseUrl = [
-  'place-hoff.com',
-  'lorempixel.com',
-  'baconmockup.com',
-  'beerhold.it',
-  'placeskull.com',
-  'placebear.com',
-];
-var imageMonkey = function () {
-  $('img').each(function () {
-    theWidth = $(this).width();
-    theHeight = $(this).height();
-    oldSrc = $(this).attr('src');
-    theSrc = getMeAnImage(theWidth, theHeight);
-    if (undefined !== oldSrc && oldSrc.length > 1 && oldSrc.indexOf('?lol') < 1 && oldSrc.indexOf('/0') < 1) {
-      $(this).addClass('imageMonkey');
-      $(this).attr('src', theSrc);
-      $(this).css("width", theWidth + "px");
-      $(this).css("height", theHeight + "px");
+(function () {
+  var randomImages = {
+    running: false,
+    baseUrl: [
+      'place-hoff.com',
+      'lorempixel.com',
+      'baconmockup.com',
+      'beerhold.it',
+      'placeskull.com',
+      'placebear.com'
+    ],
+    init: function () {
+      if (randomImages.running === false) {
+        randomImages.running = true;
+        $('img').each(function () {
+          theWidth = $(this).width();
+          theHeight = $(this).height();
+          oldSrc = $(this).attr('src');
+          theSrc = randomImages.getMeAnImage(theWidth, theHeight);
+          if (undefined !== oldSrc && oldSrc.length > 1 && oldSrc.indexOf('?lol') < 1) {
+            $(this).addClass('randomImages');
+            $(this).attr('src', theSrc);
+            $(this).css("width", theWidth + "px");
+            $(this).css("height", theHeight + "px");
+          }
+        });
+        randomImages.bgImgOnElem('a');
+        randomImages.bgImgOnElem('div');
+        randomImages.bgImgOnElem('span');
+        randomImages.bgImgOnElem('li');
+
+        randomImages.running = false;
+        setTimeout(randomImages.init, 5000);
+      }
+
+    },
+    bgImgOnElem: function (tagName) {
+      $(tagName).each(function () {
+        theWidth = $(this).width();
+        theHeight = $(this).height();
+        oldSrc = $(this).css('background-image');
+        theSrc = randomImages.getMeAnImage(theWidth, theHeight);
+        if (undefined !== oldSrc && oldSrc !== 'none' && oldSrc.length > 1 && oldSrc.indexOf('?lol') < 1) {
+          $(this).addClass('randomImages');
+          $(this).css("background-image", "url(" + theSrc + ")");
+          $(this).css("width", theWidth + "px");
+          $(this).css("height", theHeight + "px");
+        }
+      });
+    },
+    getMeAnImage: function (width, height) {
+      if (width === 0 || height === 0) {
+        return undefined;
+      }
+      var rand = randomImages.getRandomMultiplier();
+      xwidth = parseInt(rand * width, 10);
+      xheight = parseInt(rand * height, 10);
+      url = 'http://' + randomImages.baseUrl[randomImages.getRandomInt(0, 6)] + '/' + xwidth + '/' + xheight + '?lol';
+      console.log(url);
+      return url;
+    },
+    getRandomMultiplier: function () {
+      return Math.floor((Math.random() + 1) * 1000) / 1000;
+    },
+    getRandomInt: function (min, max) {
+      return Math.floor(Math.random() * (max - min)) + min;
     }
-  });
-  bgImgOnElem('a');
-  bgImgOnElem('div');
-  bgImgOnElem('span');
-  bgImgOnElem('li');
-  setTimeout(replace, 1000);
-};
-var bgImgOnElem = function (tagName) {
-  $(tagName).each(function () {
-    theWidth = $(this).width();
-    theHeight = $(this).height();
-    oldSrc = $(this).css('background-image');
-    theSrc = getMeAnImage(theWidth, theHeight);
-    if (undefined !== oldSrc && oldSrc !== 'none' && oldSrc.length > 1 && oldSrc.indexOf('?lol') < 1 && oldSrc.indexOf('/0') < 1) {
-      $(this).addClass('imageMonkey');
-      $(this).css("background-image", "url(" + theSrc + ")");
-      $(this).css("width", theWidth + "px");
-      $(this).css("height", theHeight + "px");
-    }
-  });
-}
-var getMeAnImage = function (width, height) {
-  var rand = getRandomMultiplier();
-  xwidth = parseInt(rand * width);
-  xheight = parseInt(rand * height);
-  url = 'http://' + baseUrl[getRandomInt(0, 6)] + '/' + xwidth + '/' + xheight + '?lol';
-  console.log(url);
-  return url;
-};
-var getRandomMultiplier = function () {
-  return Math.floor((Math.random() + 1) * 1000) / 1000;
-};
-var getRandomInt = function (min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-$(document).ready(setTimeout(imageMonkey(), 1000));
+  };
+
+  randomImages.init();
+
+})();
