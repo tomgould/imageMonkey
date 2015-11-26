@@ -2,7 +2,7 @@
 // @name       randomImages.js
 // @namespace  http://randomImages.js
 // @version    0.1
-// @description  replaces all the images with Beer Hold images
+// @description  replaces all the images with placeholder images
 // @match      *://*/*
 // @copyright  2012+, randomImages.js
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js
@@ -15,6 +15,8 @@
       'place-hoff.com',
       'lorempixel.com',
       'baconmockup.com',
+      'fillmurray.com',
+      'placecage.com',
       'beerhold.it',
       'placeskull.com',
       'placebear.com'
